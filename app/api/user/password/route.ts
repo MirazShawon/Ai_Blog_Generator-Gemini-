@@ -28,7 +28,7 @@ export async function PUT(request: Request) {
     // Verify JWT token
     const { payload } = await jwtVerify(
       token, 
-      new TextEncoder().encode(process.env.JWT_SECRET)
+      new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret')
     );
 
     const userId = payload.id as string;

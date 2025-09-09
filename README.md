@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Blog Generator with Gemini
 
-## Getting Started
+A modern, full-stack AI-powered blog generation platform built with Next.js, TypeScript, Prisma, and Google's Gemini AI.
 
-First, run the development server:
+## 🚀 Features
 
+- **AI-Powered Content Generation**: Create high-quality blog posts using Google's Gemini AI
+- **User Authentication**: Secure login/signup with JWT tokens
+- **Draft Management**: Save, edit, and manage drafts before publishing
+- **Collections**: Organize your posts into custom collections
+- **Responsive Design**: Modern UI built with Tailwind CSS and Radix UI
+- **Database Integration**: MongoDB with Prisma ORM
+- **Email Integration**: Welcome emails and notifications with Resend
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS, Radix UI
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: MongoDB
+- **AI**: Google Gemini AI
+- **Authentication**: JWT with Jose
+- **Email**: Resend API
+- **Deployment**: Vercel
+
+## 🚀 Quick Start
+
+### Local Development
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/MirazShawon/Ai_Blog_Generator-Gemini-.git
+cd Ai_Blog_Generator-Gemini-
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Edit `.env` with your actual values:
+```env
+DATABASE_URL=your_mongodb_connection_string
+RESEND_API_KEY=your_resend_api_key
+JWT_SECRET=your_jwt_secret_key
+GOOGLE_AI_API_KEY=your_google_ai_api_key
+NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY=your_google_ai_api_key
+NODE_ENV=development
+```
 
-## Learn More
+4. Generate Prisma client:
+```bash
+npx prisma generate
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. Run the development server:
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Vercel Deployment
 
-## Deploy on Vercel
+### 1. Deploy to Vercel
+1. Push your code to GitHub
+2. Import your repository to Vercel
+3. Set up environment variables in Vercel dashboard
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Environment Variables for Production
+Set these in your Vercel project settings:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+DATABASE_URL=your_mongodb_connection_string
+RESEND_API_KEY=your_resend_api_key  
+JWT_SECRET=your_jwt_secret_key
+GOOGLE_AI_API_KEY=your_google_ai_api_key
+NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY=your_google_ai_api_key
+NODE_ENV=production
+```
+
+### 3. Database Setup
+- Ensure your MongoDB database is accessible from Vercel
+- Consider using MongoDB Atlas for cloud hosting
+
+## 📁 Project Structure
+
+```
+├── app/                   # Next.js App Router
+│   ├── api/              # API routes
+│   ├── components/       # React components
+│   └── pages/           # Application pages
+├── components/           # Reusable UI components
+├── lib/                 # Utility functions
+├── prisma/              # Database schema and migrations
+└── public/              # Static assets
+```
+
+## 🔧 Available Scripts
+
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm test` - Run tests
+- `npx prisma generate` - Generate Prisma client
+- `npx prisma studio` - Open Prisma Studio
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) - React framework
+- [Google Gemini AI](https://ai.google.dev/) - AI content generation
+- [Prisma](https://prisma.io/) - Database toolkit
+- [Vercel](https://vercel.com/) - Deployment platform
+
+---
+
+Built with ❤️ by [MirazShawon](https://github.com/MirazShawon)

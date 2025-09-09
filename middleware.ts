@@ -4,9 +4,9 @@ import type { NextRequest } from 'next/server'
 import {SignJWT, jwtVerify, type JWTPayload} from 'jose';
 
 // Define which paths require authentication
-const protectedPaths = [ null]
+const protectedPaths: string[] = [] // Currently empty, but can be populated as needed
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   
   // Check if the path is protected
@@ -18,14 +18,17 @@ export function middleware(request: NextRequest) {
     // Get the token from cookies
     const token = request.cookies.get('auth-token')?.value
     
-    // For debugging
-    console.log("Path:", pathname, "Token:", token ? "exists" : "missing")
+    if (!token) {
+      const url = new URL('/login', request.url)
+      url.searchParams.set('from', pathname)
+      return NextResponse.redirect(url)
+    }
     
-    // Verify the token
-    const userData = token ? jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key')) : null
-    
-    // If no valid token, redirect to login
-    if (!userData) {
+    try {
+      // Verify the token
+      await jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET || 'default-secret-key'))
+    } catch (error) {
+      // If token is invalid, redirect to login
       const url = new URL('/login', request.url)
       url.searchParams.set('from', pathname)
       return NextResponse.redirect(url)
