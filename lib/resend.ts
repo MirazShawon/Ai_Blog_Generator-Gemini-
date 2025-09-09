@@ -2,13 +2,16 @@
 
 import { Resend } from 'resend';
 
+// Initialize Resend with the API key or a default key for build purposes
+const apiKey = process.env.RESEND_API_KEY || 're_default_key_for_build';
+
 // Check if the API key is set
 if (!process.env.RESEND_API_KEY) {
   console.warn('RESEND_API_KEY is not defined. Email functionality will not work.');
 }
 
 // Initialize Resend with the API key
-export const resend = new Resend(process.env.RESEND_API_KEY);
+export const resend = new Resend(apiKey);
 
 // Default sender configuration
 export const DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'; // Resend's default verified domain

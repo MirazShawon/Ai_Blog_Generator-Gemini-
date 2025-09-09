@@ -28,7 +28,16 @@ export async function POST(request: Request) {
 
     // Only import and use Resend if we have a real API key
     const { Resend } = await import('resend');
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    const resend = new Resend(process.env.RESEND_API_KEY || 're_default_key_for_build');
+
+    // Check if we have a real API key before sending email
+    if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === 're_default_key_for_build') {
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Email sending is not configured in this environment',
+        data: { id: 'mock-email-id', from: 'onboarding@resend.dev', to: email }
+      });
+    }
 
     // Send actual email using Resend
     const data = await resend.emails.send({
