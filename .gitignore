@@ -29,8 +29,17 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files
+.env
+
+# Prisma generated files in the old location
+prisma/generated/
+
+# VSCode settings
+.vscode/
+
+# Optional: coverage reports
+coverage/
 
 # vercel
 .vercel
