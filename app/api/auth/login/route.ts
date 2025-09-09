@@ -105,8 +105,17 @@ export async function POST(request: Request) {
 
   } catch (authenticationError) {
     console.error('Authentication process failed:', authenticationError);
+    
+    // Return more specific error information for debugging
+    const errorMessage = authenticationError instanceof Error 
+      ? authenticationError.message 
+      : 'Internal server error';
+      
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Authentication failed',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }

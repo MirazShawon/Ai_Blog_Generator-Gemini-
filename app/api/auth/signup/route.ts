@@ -84,8 +84,16 @@ export async function POST(request: Request) {
     
   } catch (registrationError) {
     console.error("Registration process failed:", registrationError);
+    
+    const errorMessage = registrationError instanceof Error 
+      ? registrationError.message 
+      : 'Error creating user';
+      
     return NextResponse.json(
-      { error: "Error creating user" },
+      { 
+        error: "Registration failed",
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
