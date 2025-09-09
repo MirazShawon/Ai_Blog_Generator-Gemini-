@@ -29,8 +29,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
-.env
+# env files (commented out temporarily for deployment)
+# .env
 
 # Prisma generated files in the old location
 prisma/generated/

@@ -1,10 +1,8 @@
 // Authentication endpoint for user session management
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import { SignJWT } from 'jose';
-
-const databaseClient = new PrismaClient();
 
 interface LoginCredentials {
   email: string;
@@ -17,7 +15,7 @@ class AuthenticationService {
     const { email, password } = credentials;
     
     // Retrieve user from database
-    const userRecord = await databaseClient.user.findUnique({
+    const userRecord = await prisma.user.findUnique({
       where: { email }
     });
 
