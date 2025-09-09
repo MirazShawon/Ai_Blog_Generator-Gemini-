@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogAI API Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #005a87;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            border-left: 4px solid #dc3545;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-data {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 BlogAI API Tester</h1>
+    <p>This tool helps you test all the API endpoints and verify JSON data posting/fetching.</p>
+
+    <div class="test-section">
+        <h2>🧪 0. JSON API Test (Basic Verification)</h2>
+        <div class="test-data">
+            POST /api/test-json
+            Content-Type: application/json
+            Body: {"testData":"Hello World","timestamp":"[current time]","testValue":123}
+        </div>
+        <button class="test-button" onclick="testJsonAPI()">Test JSON API Endpoint</button>
+        <div id="json-test-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 1. Signup API Test</h2>
+        <div class="test-data">
+            POST /api/auth/signup
+            Content-Type: application/json
+            Body: {"name":"Test User","email":"test@example.com","password":"testpass123"}
+        </div>
+        <button class="test-button" onclick="testSignup()">Test Signup API</button>
+        <div id="signup-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 2. Login API Test</h2>
+        <div class="test-data">
+            POST /api/auth/login
+            Content-Type: application/json
+            Body: {"email":"test@example.com","password":"testpass123"}
+        </div>
+        <button class="test-button" onclick="testLogin()">Test Login API</button>
+        <div id="login-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 3. Get Posts API Test</h2>
+        <div class="test-data">
+            GET /api/posts
+        </div>
+        <button class="test-button" onclick="testGetPosts()">Test Get Posts API</button>
+        <div id="posts-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 4. Create Post API Test</h2>
+        <div class="test-data">
+            POST /api/posts
+            Content-Type: application/json
+            Authorization: Bearer [token]
+            Body: {"title":"Test Post","content":"Test content","excerpt":"Test excerpt","published":false}
+        </div>
+        <button class="test-button" onclick="testCreatePost()">Test Create Post API</button>
+        <div id="create-post-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 5. Dashboard API Test</h2>
+        <div class="test-data">
+            GET /api/dashboard
+        </div>
+        <button class="test-button" onclick="testDashboard()">Test Dashboard API</button>
+        <div id="dashboard-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 6. Gemini AI API Test</h2>
+        <div class="test-data">
+            POST /api/gemini
+            Content-Type: application/json
+            Body: {"prompt":"Write a short paragraph about AI."}
+        </div>
+        <button class="test-button" onclick="testGemini()">Test Gemini AI API</button>
+        <div id="gemini-result" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Test Summary</h2>
+        <button class="test-button" onclick="runAllTests()">🚀 Run All Tests</button>
+        <div id="summary-result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        let authToken = null;
+        let testResults = {
+            passed: 0,
+            failed: 0,
+            total: 0
+        };
+
+        function displayResult(elementId, data, success = true) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = success ? 'result success' : 'result error';
+            element.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+        }
+
+        async function apiRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                return {
+                    success: response.ok,
+                    status: response.status,
+                    data: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        async function testJsonAPI() {
+            console.log('🧪 Testing Basic JSON API...');
+            const testData = {
+                testData: "Hello World",
+                timestamp: new Date().toISOString(),
+                testValue: 123,
+                complexObject: {
+                    nested: true,
+                    array: [1, 2, 3],
+                    string: "test"
+                }
+            };
+
+            const result = await apiRequest('/api/test-json', {
+                method: 'POST',
+                body: JSON.stringify(testData)
+            });
+
+            displayResult('json-test-result', result, result.success);
+            
+            testResults.total++;
+            if (result.success) testResults.passed++;
+            else testResults.failed++;
+        }
+
+        async function testSignup() {
+            console.log('🧪 Testing Signup API...');
+            const testData = {
+                name: "Test User",
+                email: `test${Date.now()}@example.com`,
+                password: "testpass123"
+            };
+
+            const result = await apiRequest('/api/auth/signup', {
+                method: 'POST',
+                body: JSON.stringify(testData)
+            });
+
+            displayResult('signup-result', result, result.success);
+            if (result.success && result.data.token) {
+                authToken = result.data.token;
+                console.log('✅ Signup successful, token stored');
+            }
+            
+            testResults.total++;
+            if (result.success) testResults.passed++;
+            else testResults.failed++;
+        }
+
+        async function testLogin() {
+            console.log('🧪 Testing Login API...');
+            const testData = {
+                email: "test@example.com",
+                password: "testpass123"
+            };
+
+            const result = await apiRequest('/api/auth/login', {
+                method: 'POST',
+                body: JSON.stringify(testData)
+            });
+
+            displayResult('login-result', result, result.success);
+            if (result.success && result.data.token) {
+                authToken = result.data.token;
+                console.log('✅ Login successful, token stored');
+            }
+            
+            testResults.total++;
+            if (result.success) testResults.passed++;
+            else testResults.failed++;
+        }
+
+        async function testGetPosts() {
+            console.log('🧪 Testing Get Posts API...');
+            const result = await apiRequest('/api/posts', {
+                method: 'GET'
+            });
+
+            displayResult('posts-result', result, result.success);
+            
+            testResults.total++;
+            if (result.success) testResults.passed++;
+            else testResults.failed++;
+        }
+
+        async function testCreatePost() {
+            console.log('🧪 Testing Create Post API...');
+            
+            if (!authToken) {
+                displayResult('create-post-result', 'Error: No auth token available. Please run signup or login first.', false);
+                return;
+            }
+
+            const testData = {
+                title: "Test Blog Post",
+                content: "This is a test blog post content for API testing.",
+                excerpt: "Test excerpt",
+                published: false
+            };
+
+            const result = await apiRequest('/api/posts', {
+                method: 'POST',
+                body: JSON.stringify(testData),
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+
+            displayResult('create-post-result', result, result.success);
+            
+            testResults.total++;
+            if (result.success) testResults.passed++;
+            else testResults.failed++;
+        }
+
+        async function testDashboard() {
+            console.log('🧪 Testing Dashboard API...');
+            const result = await apiRequest('/api/dashboard', {
+                method: 'GET'
+            });
+
+            displayResult('dashboard-result', result, result.success);
+            
+            testResults.total++;
+            if (result.success) testResults.passed++;
+            else testResults.failed++;
+        }
+
+        async function testGemini() {
+            console.log('🧪 Testing Gemini AI API...');
+            const testData = {
+                prompt: "Write a short paragraph about the benefits of AI in content creation."
+            };
+
+            const result = await apiRequest('/api/gemini', {
+                method: 'POST',
+                body: JSON.stringify(testData)
+            });
+
+            displayResult('gemini-result', result, result.success);
+            
+            testResults.total++;
+            if (result.success) testResults.passed++;
+            else testResults.failed++;
+        }
+
+        async function runAllTests() {
+            console.log('🚀 Running all API tests...');
+            testResults = { passed: 0, failed: 0, total: 0 };
+
+            await testJsonAPI();
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+
+            await testSignup();
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+
+            await testLogin();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            await testGetPosts();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            await testCreatePost();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            await testDashboard();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            await testGemini();
+
+            const summary = {
+                totalTests: testResults.total,
+                passed: testResults.passed,
+                failed: testResults.failed,
+                successRate: `${((testResults.passed / testResults.total) * 100).toFixed(1)}%`,
+                status: testResults.passed === testResults.total ? '🎉 ALL TESTS PASSED!' : '⚠️ Some tests failed'
+            };
+
+            displayResult('summary-result', summary, testResults.passed === testResults.total);
+        }
+    </script>
+</body>
+</html>
